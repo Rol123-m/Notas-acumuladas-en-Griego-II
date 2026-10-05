@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escalafón Griego II (Semanas 15-30)</title>
+<style>
+  :root {
+    --primary: #2c3e50; --secondary: #3498db; --accent: #e74c3c;
+    --light: #ecf0f1; --dark: #1a252f; --success: #27ae60; --warning: #f39c12;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f4f6f9; color: #333; padding: 20px; }
+  .container { max-width: 1500px; margin: 0 auto; }
+  header {
+    background: var(--primary); color: white; padding: 20px 30px;
+    border-radius: 12px; margin-bottom: 25px; display: flex;
+    justify-content: space-between; align-items: center; flex-wrap: wrap;
+    gap: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  header h1 { font-size: 1.8rem; font-weight: 600; }
+  header h1 span { color: var(--secondary); }
+  header .subtitle { font-size: 0.85rem; color: #bdc3c7; margin-top: 4px; }
+  .controls { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
+  .controls label { font-weight: 500; font-size: 0.95rem; }
+  .controls select, .controls button {
+    padding: 8px 15px; border-radius: 8px; border: none; font-size: 0.95rem;
+    cursor: pointer; background: white; color: var(--primary); font-weight: 500;
+  }
+  .controls button { background: var(--secondary); color: white; }
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px; margin-bottom: 25px;
+  }
+  .stat-card {
+    background: white; padding: 20px; border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 5px solid var(--secondary);
+  }
+  .stat-card h3 {
+    font-size: 0.85rem; text-transform: uppercase; color: #7f8c8d;
+    letter-spacing: 0.5px; margin-bottom: 5px;
+  }
+  .stat-card .value { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+  .stat-card .sub { font-size: 0.85rem; color: #95a5a6; margin-top: 5px; }
+  .table-container {
+    background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    overflow-x: auto; margin-bottom: 30px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 1000px; }
+  thead { background: var(--primary); color: white; position: sticky; top: 0; z-index: 10; }
+  th { padding: 12px 10px; text-align: left; font-weight: 600; white-space: nowrap;
+       font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.3px; }
+  td { padding: 10px; border-bottom: 1px solid #e9ecef; vertical-align: middle; }
+  tbody tr:hover { background: #f8f9fa; }
+  .rank { font-weight: 700; color: var(--primary); font-size: 1rem; width: 45px; text-align: center; }
+  .rank.gold { color: #f1c40f; } .rank.silver { color: #95a5a6; } .rank.bronze { color: #cd7f32; }
+  .student-name { font-weight: 600; color: var(--dark); font-size: 0.88rem; }
+  .student-id { font-size: 0.75rem; color: #95a5a6; }
+  .student-group {
+    display: inline-block; padding: 2px 10px; border-radius: 20px;
+    font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+  }
+  .group-Alfa { background: #d4e6f1; color: #1a5276; }
+  .group-Beta { background: #fdebd0; color: #7e5109; }
+  .group-Gamma { background: #d5f5e3; color: #1e8449; }
+  .score { font-weight: 600; font-family: 'Courier New', monospace; font-size: 0.85rem; }
+  .score.high { color: var(--success); }
+  .score.medium { color: var(--warning); }
+  .score.low { color: var(--accent); }
+  .score.zero { color: #bdc3c7; text-decoration: line-through; }
+  .average {
+    font-weight: 700; font-size: 1rem; color: var(--primary);
+    background: #eaf2f8; padding: 4px 10px; border-radius: 6px; display: inline-block;
+  }
+  .no-data { color: #bdc3c7; font-style: italic; font-size: 0.8rem; }
+  .footer { text-align: center; padding: 20px; color: #95a5a6; font-size: 0.85rem; }
+  .loading { text-align: center; padding: 40px; color: var(--secondary); font-size: 1.2rem; }
+  .error {
+    background: #fadbd8; color: #922b21; padding: 15px; border-radius: 8px;
+    margin-bottom: 20px; border-left: 5px solid var(--accent);
+  }
+  .week-tag {
+    display: inline-block; background: #eaf2f8; color: var(--primary);
+    padding: 1px 5px; border-radius: 3px; font-size: 0.6rem; font-weight: 700;
+    margin-right: 2px;
+  }
+  .progress-bar {
+    height: 6px; background: #ecf0f1; border-radius: 3px;
+    overflow: hidden; margin-top: 6px;
+  }
+  .progress-fill {
+    height: 100%; background: var(--secondary); border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+  .progress-fill.low { background: var(--accent); }
+  @media (max-width: 768px) {
+    header { flex-direction: column; align-items: flex-start; }
+    .controls { width: 100%; }
+    .controls select, .controls button { flex: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1>📚 Escalafón <span>Griego II</span></h1>
+      <div class="subtitle">Semanas 15 a 30 · Promedio sobre el total de exámenes (no realizados = 0)</div>
+    </div>
+    <div class="controls">
+      <label for="groupFilter">Grupo:</label>
+      <select id="groupFilter">
+        <option value="todos">Todos</option>
+        <option value="Alfa">Alfa</option>
+        <option value="Beta">Beta</option>
+        <option value="Gamma">Gamma</option>
+      </select>
+      <label for="weekFilter">Semana:</label>
+      <select id="weekFilter"><option value="todas">Todas</option></select>
+      <button id="refreshBtn">🔄 Actualizar</button>
+    </div>
+  </header>
+
+  <div id="errorBox"></div>
+  <div class="stats-grid" id="statsGrid"></div>
+
+  <div class="table-container">
+    <table id="rankingTable">
+      <thead>
+        <tr>
+          <th>#</th><th>Estudiante</th><th>Grupo</th>
+          <th>Promedio</th><th>Progreso</th><th>Notas por semana</th>
+        </tr>
+      </thead>
+      <tbody id="rankingBody">
+        <tr><td colspan="6" class="loading">⏳ Cargando datos...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <p>Datos actualizados: <span id="lastUpdate">—</span> |
+       Estudiantes: <span id="totalStudents">—</span> |
+       Exámenes detectados: <span id="totalExams">—</span></p>
+    <p>🔑 Las notas se asocian por <strong>ID de estudiante</strong>. Los exámenes no realizados cuentan como <strong>0</strong> en el promedio.</p>
+    <p style="margin-top:8px;font-size:0.75rem;">🔄 Esta página se actualiza automáticamente cada 60 segundos.</p>
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycby6TaTpvCVvYrQi_h-063JcHOf-tmBAQAM91UaQupWmyLUitv2f8BcWhMfESoTZV3tm/exec";
+
+let datosGlobales = null;
+let semanasDisponibles = [];
+
+// --- Cargar datos ---
+async function cargarDatos() {
+  const errorBox = document.getElementById("errorBox");
+  errorBox.innerHTML = "";
+
+  try {
+    const resp = await fetch(API_URL + "?t=" + Date.now());
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const data = await resp.json();
+    datosGlobales = data;
+
+    const setSemanas = new Set(data.examenes.map(e => e.semana));
+    semanasDisponibles = Array.from(setSemanas).sort((a, b) => a - b);
+    cargarSemanas();
+
+    renderizar();
+    document.getElementById("lastUpdate").textContent =
+      new Date(data.actualizado).toLocaleString("es-ES");
+    document.getElementById("totalStudents").textContent =
+      data.estudiantes.length;
+    document.getElementById("totalExams").textContent =
+      data.examenes.length;
+  } catch (err) {
+    console.error(err);
+    errorBox.innerHTML = `<div class="error">
+      ❌ Error al cargar datos: ${err.message}<br>
+      Verifica que la URL del Apps Script sea correcta y esté publicada como "Cualquier persona".
+    </div>`;
+  }
+}
+
+function cargarSemanas() {
+  const select = document.getElementById("weekFilter");
+  const actual = select.value;
+  select.innerHTML = '<option value="todas">Todas</option>';
+  semanasDisponibles.forEach(num => {
+    const opt = document.createElement("option");
+    opt.value = num; opt.textContent = "Semana " + num;
+    select.appendChild(opt);
+  });
+  if (semanasDisponibles.map(String).includes(actual)) select.value = actual;
+}
+
+// ============================================================
+//  PROCESAMIENTO DE DATOS
+//  🔑 CLAVE: el promedio se calcula sobre TODOS los exámenes
+//  que existen para el filtro actual. Los no realizados = 0.
+// ============================================================
+function procesarDatos(semanaFiltro, grupoFiltro) {
+  if (!datosGlobales) return { estudiantes: [], totalExamenes: 0 };
+
+  // 1. Exámenes que aplican al filtro de semana
+  let examenesAplicables = datosGlobales.examenes;
+  if (semanaFiltro !== "todas") {
+    examenesAplicables = examenesAplicables.filter(
+      e => String(e.semana) === String(semanaFiltro)
+    );
+  }
+
+  // 2. Exámenes que aplican al grupo del estudiante
+  //    (un estudiante de Alfa solo debe rendir los exámenes de Alfa)
+  function examenesParaGrupo(grupo) {
+    return examenesAplicables.filter(e => e.grupo === grupo || e.grupo === "—");
+  }
+
+  // 3. Calcular promedio por estudiante
+  const estudiantes = datosGlobales.estudiantes.map(est => {
+    const examenesEst = examenesParaGrupo(est.grupo);
+    const totalExamenes = examenesEst.length;
+
+    let suma = 0;
+    let countRealizados = 0;
+    const notas = {};
+
+    examenesEst.forEach(ex => {
+      const nota = ex.notas[est.id];
+      if (nota !== undefined && nota !== null) {
+        notas[ex.id] = nota;
+        suma += nota;
+        countRealizados++;
+      } else {
+        // No realizado: cuenta como 0
+        notas[ex.id] = 0;
+      }
+    });
+
+    // Promedio = suma / total de exámenes (no realizados incluidos)
+    const promedioNum = totalExamenes > 0 ? suma / totalExamenes : 0;
+
+    return {
+      ...est,
+      notas,
+      suma,
+      countRealizados,
+      totalExamenes,
+      promedio: totalExamenes > 0 ? promedioNum.toFixed(1) : "—",
+      promedioNum
+    };
+  });
+
+  // 4. Filtrar por grupo si aplica
+  let filtrados = estudiantes;
+  if (grupoFiltro !== "todos") {
+    filtrados = filtrados.filter(e => e.grupo === grupoFiltro);
+  }
+
+  // 5. Ordenar
+  filtrados.sort((a, b) => b.promedioNum - a.promedioNum);
+
+  return {
+    estudiantes: filtrados,
+    examenesAplicables,
+    totalExamenes: examenesAplicables.length
+  };
+}
+
+// --- Renderizar ---
+function renderizar() {
+  if (!datosGlobales) return;
+  const grupoFiltro = document.getElementById("groupFilter").value;
+  const semanaFiltro = document.getElementById("weekFilter").value;
+
+  const resultado = procesarDatos(semanaFiltro, grupoFiltro);
+  const datos = resultado.estudiantes;
+
+  renderizarStats(datos, semanaFiltro, grupoFiltro);
+
+  const tbody = document.getElementById("rankingBody");
+  tbody.innerHTML = "";
+
+  if (datos.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="no-data">Sin datos para este filtro.</td></tr>';
+    return;
+  }
+
+  // Exámenes a mostrar en columnas
+  const examenesMostrar = semanaFiltro === "todas"
+    ? datosGlobales.examenes
+    : datosGlobales.examenes.filter(e => String(e.semana) === String(semanaFiltro));
+
+  datos.forEach((est, i) => {
+    const tr = document.createElement("tr");
+
+    // Rank
+    const rankTd = document.createElement("td");
+    rankTd.className = "rank";
+    if (i === 0) rankTd.classList.add("gold");
+    else if (i === 1) rankTd.classList.add("silver");
+    else if (i === 2) rankTd.classList.add("bronze");
+    rankTd.textContent = i + 1;
+    tr.appendChild(rankTd);
+
+    // Estudiante
+    const nameTd = document.createElement("td");
+    nameTd.innerHTML = `<div class="student-name">${est.nombre}</div>
+                        <div class="student-id">ID: ${est.id}</div>`;
+    tr.appendChild(nameTd);
+
+    // Grupo
+    const groupTd = document.createElement("td");
+    groupTd.innerHTML = `<span class="student-group group-${est.grupo}">${est.grupo}</span>`;
+    tr.appendChild(groupTd);
+
+    // Promedio
+    const avgTd = document.createElement("td");
+    let avgClass = "";
+    if (est.promedio !== "—") {
+      const num = parseFloat(est.promedio);
+      if (num >= 90) avgClass = "high";
+      else if (num >= 70) avgClass = "medium";
+      else avgClass = "low";
+    }
+    avgTd.innerHTML = `<span class="average ${avgClass}">${est.promedio}</span>`;
+    tr.appendChild(avgTd);
+
+    // Progreso (realizados / total)
+    const progTd = document.createElement("td");
+    const pct = est.totalExamenes > 0
+      ? Math.round((est.countRealizados / est.totalExamenes) * 100)
+      : 0;
+    const fillClass = pct < 50 ? "low" : "";
+    progTd.innerHTML = `
+      <div style="font-size:0.75rem;color:#7f8c8d;">
+        ${est.countRealizados}/${est.totalExamenes} (${pct}%)
+      </div>
+      <div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${pct}%"></div></div>
+    `;
+    tr.appendChild(progTd);
+
+    // Notas por semana
+    const examsTd = document.createElement("td");
+    let html = "";
+    const examenesOrdenados = [...examenesMostrar]
+      .sort((a, b) => a.semana - b.semana || a.grupo.localeCompare(b.grupo));
+
+    examenesOrdenados.forEach(ex => {
+      const nota = est.notas[ex.id];
+      if (nota !== undefined) {
+        let cls;
+        if (nota === 0) cls = "zero";
+        else if (nota >= 90) cls = "high";
+        else if (nota >= 70) cls = "medium";
+        else cls = "low";
+
+        html += `<span class="score ${cls}" style="margin-right:6px;"
+                 title="${ex.nombre} (${ex.grupo})">
+                 <span class="week-tag">S${ex.semana}</span>${nota}
+                 </span>`;
+      }
+    });
+    examsTd.innerHTML = html || '<span class="no-data">Sin datos</span>';
+    tr.appendChild(examsTd);
+
+    tbody.appendChild(tr);
+  });
+}
+
+function renderizarStats(datos, semanaFiltro, grupoFiltro) {
+  const total = datos.length;
+  const conNotas = datos.filter(d => d.countRealizados > 0).length;
+  const promedioGeneral = total > 0
+    ? (datos.reduce((s, d) => s + d.promedioNum, 0) / total).toFixed(1)
+    : "—";
+  const mejor = datos.length > 0 ? datos[0] : null;
+
+  const labelSemana = semanaFiltro === "todas"
+    ? "Todas las semanas"
+    : "Semana " + semanaFiltro;
+  const labelGrupo = grupoFiltro === "todos" ? "Todos los grupos" : "Grupo " + grupoFiltro;
+
+  document.getElementById("statsGrid").innerHTML = `
+    <div class="stat-card"><h3>Total Estudiantes</h3>
+      <div class="value">${total}</div>
+      <div class="sub">${labelGrupo}</div></div>
+    <div class="stat-card"><h3>Con Notas</h3>
+      <div class="value">${conNotas}</div>
+      <div class="sub">${total - conNotas} sin entregar</div></div>
+    <div class="stat-card"><h3>Promedio General</h3>
+      <div class="value">${promedioGeneral}</div>
+      <div class="sub">${labelSemana}</div></div>
+    <div class="stat-card"><h3>Mejor Promedio</h3>
+      <div class="value">${mejor ? mejor.promedio : "—"}</div>
+      <div class="sub">${mejor ? mejor.nombre.split(" ")[0] : "—"}</div></div>
+  `;
+}
+
+// --- Eventos ---
+document.addEventListener("DOMContentLoaded", () => {
+  cargarDatos();
+  document.getElementById("groupFilter").addEventListener("change", renderizar);
+  document.getElementById("weekFilter").addEventListener("change", renderizar);
+  document.getElementById("refreshBtn").addEventListener("click", cargarDatos);
+
+  setInterval(cargarDatos, 60000);
+});
+</script>
+</body>
+</html>
