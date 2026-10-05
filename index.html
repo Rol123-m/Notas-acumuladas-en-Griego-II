@@ -47,7 +47,6 @@
     --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Modo oscuro automático */
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #0b1120;
@@ -165,12 +164,39 @@
     color: #cbd5e1;
     margin-top: 6px;
     font-weight: 400;
-    line-height: 1.4;
+    line-height: 1.5;
   }
 
   .header-title .subtitle strong {
     color: #a5b4fc;
     font-weight: 600;
+  }
+
+  .week-badge-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(129, 140, 248, 0.4);
+    color: #c7d2fe;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+
+  .week-badge-header .dot {
+    width: 6px;
+    height: 6px;
+    background: #a5b4fc;
+    border-radius: 50%;
+    animation: pulseDot 2s infinite;
+  }
+
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
   }
 
   /* ============================================================
@@ -529,6 +555,22 @@
     }
   }
 
+  /* Marcas para semanas no cerradas */
+  .score.pending {
+    background: var(--border-soft);
+    color: var(--text-soft);
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    opacity: 0.7;
+    border: 1px dashed var(--border);
+  }
+
+  .score.pending .week-tag {
+    background: transparent;
+    color: var(--text-soft);
+  }
+
   .progress-bar {
     height: 6px;
     background: var(--border);
@@ -672,7 +714,6 @@
       flex-shrink: 0;
     }
 
-    /* Rank especial: en esquina superior izquierda */
     td.rank-cell {
       position: absolute;
       top: 14px;
@@ -695,7 +736,6 @@
     td.rank-cell.silver { background: linear-gradient(135deg, #e2e8f0, #94a3b8); color: #1e293b; }
     td.rank-cell.bronze { background: linear-gradient(135deg, #fbbf24, #b45309); color: #fff; }
 
-    /* Estudiante ocupa ancho completo */
     td.student-cell {
       display: block;
       padding: 0 0 10px 0;
@@ -707,7 +747,6 @@
 
     .student-name { font-size: 0.98rem; }
 
-    /* Notas por semana: se envuelven */
     td.exams-cell {
       display: flex;
       flex-wrap: wrap;
@@ -745,14 +784,12 @@
     td.student-cell { padding-left: 42px; }
   }
 
-  /* Accesibilidad: foco visible */
   select:focus-visible,
   button:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
-  /* Reducir movimiento si el usuario lo prefiere */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
@@ -771,7 +808,11 @@
           Escalafón <span class="accent">Griego II</span>
         </h1>
         <p class="subtitle">
-          Semanas <strong>15 a 30</strong> · Promedio sobre el total de exámenes (no realizados = 0)
+          Semanas <strong>15 a 30</strong> · Promedio sobre semanas cerradas
+          <span class="week-badge-header">
+            <span class="dot"></span>
+            <span id="semanaActualLabel">—</span>
+          </span>
         </p>
       </div>
       <div class="controls">
@@ -825,6 +866,7 @@
       Exámenes detectados: <strong id="totalExams">—</strong>
     </p>
     <p>🔑 Las notas se asocian por <strong>ID de estudiante</strong>. Los exámenes no realizados cuentan como <strong>0</strong> en el promedio.</p>
+    <p>🔒 Las semanas futuras no cuentan hasta que cierren (lunes de cada semana).</p>
     <p style="font-size:0.75rem;margin-top:8px;">🔄 Esta página se actualiza automáticamente cada 60 segundos.</p>
   </div>
 </div>
@@ -833,8 +875,7 @@
 // ============================================================
 // ⚠️ PEGA AQUÍ LA URL DE TU APLICACIÓN WEB DE APPS SCRIPT
 // ============================================================
-const API_URL = "https://script.google.com/macros/s/AKfycbxzY248XKb79JjkcELF3eeJQOW1DIlDHPuuCmoZTT8wFy8m_8aEwfGjlaQrRR5Y9IbA/exec";
-
+const API_URL = "https://script.google.com/macros/s/AKfycbx3bkk_jHwuT5dliipFQYDlvRIwzDCv7pvkJqgVXbdtZ1OORoQ7aKI7prhX1uWWjjMa/exec"
 let datosGlobales = null;
 let semanasDisponibles = [];
 
@@ -896,6 +937,7 @@ async function cargarDatos() {
     semanasDisponibles = Array.from(setSemanas).sort((a, b) => a - b);
     cargarSemanas();
     renderizar();
+    actualizarSemanaActual();
 
     document.getElementById("lastUpdate").textContent =
       new Date(data.actualizado).toLocaleString("es-ES");
@@ -935,13 +977,15 @@ function cargarSemanas() {
 
 // ============================================================
 //  PROCESAMIENTO DE DATOS
-//  🔑 CLAVE: el promedio se calcula sobre TODOS los exámenes
-//  que existen para el filtro actual. Los no realizados = 0.
+//  🔑 CLAVE: solo cuentan los exámenes cuya semana YA CERRÓ.
+//  Las semanas en curso o futuras NO bajan el promedio.
 // ============================================================
 function procesarDatos(semanaFiltro, grupoFiltro) {
   if (!datosGlobales) return { estudiantes: [], totalExamenes: 0 };
 
-  let examenesAplicables = datosGlobales.examenes;
+  // 🔑 FILTRO CLAVE: solo exámenes con semana YA CERRADA
+  let examenesAplicables = datosGlobales.examenes.filter(e => e.cerrada === true);
+
   if (semanaFiltro !== "todas") {
     examenesAplicables = examenesAplicables.filter(
       e => String(e.semana) === String(semanaFiltro)
@@ -1017,9 +1061,14 @@ function renderizar() {
     return;
   }
 
-  const examenesMostrar = semanaFiltro === "todas"
-    ? datosGlobales.examenes
-    : datosGlobales.examenes.filter(e => String(e.semana) === String(semanaFiltro));
+  // Notas por semana: mostramos TODAS las semanas (cerradas y no cerradas),
+  // pero las no cerradas se ven con estilo "pendiente" y no cuentan.
+  let examenesMostrar;
+  if (semanaFiltro === "todas") {
+    examenesMostrar = datosGlobales.examenes;
+  } else {
+    examenesMostrar = datosGlobales.examenes.filter(e => String(e.semana) === String(semanaFiltro));
+  }
 
   datos.forEach((est, i) => {
     const tr = document.createElement("tr");
@@ -1085,7 +1134,21 @@ function renderizar() {
       .sort((a, b) => a.semana - b.semana || a.grupo.localeCompare(b.grupo));
 
     examenesOrdenados.forEach(ex => {
+      // Solo mostrar exámenes del grupo del estudiante
+      if (ex.grupo !== est.grupo && ex.grupo !== "—") return;
+
       const nota = est.notas[ex.id];
+      const esCerrada = ex.cerrada === true;
+
+      if (!esCerrada) {
+        // Semana futura/en curso: mostrar como pendiente (con candado)
+        html += `<span class="score pending"
+                 title="Semana ${ex.semana} aún no cierra · no cuenta para el promedio">
+                 <span class="week-tag">S${ex.semana}</span>🔒
+                 </span>`;
+        return;
+      }
+
       if (nota !== undefined) {
         let cls;
         if (nota === 0) cls = "zero";
@@ -1115,7 +1178,7 @@ function renderizarStats(datos, semanaFiltro, grupoFiltro) {
   const mejor = datos.length > 0 ? datos[0] : null;
 
   const labelSemana = semanaFiltro === "todas"
-    ? "Todas las semanas"
+    ? "Semanas cerradas"
     : "Semana " + semanaFiltro;
   const labelGrupo = grupoFiltro === "todos" ? "Todos los grupos" : "Grupo " + grupoFiltro;
 
@@ -1133,6 +1196,19 @@ function renderizarStats(datos, semanaFiltro, grupoFiltro) {
       <div class="value">${mejor ? mejor.promedio : "—"}</div>
       <div class="sub">${mejor ? mejor.nombre.split(" ")[0] : "—"}</div></div>
   `;
+}
+
+// --- Actualizar indicador de la semana en curso ---
+function actualizarSemanaActual() {
+  if (!datosGlobales) return;
+  const el = document.getElementById("semanaActualLabel");
+  if (!el) return;
+  const sem = datosGlobales.semanaActual;
+  const cierre = new Date(datosGlobales.fechaCierreActual);
+  const cierreStr = cierre.toLocaleDateString("es-ES", {
+    day: "numeric", month: "short"
+  });
+  el.textContent = `Semana ${sem} en curso · cierra ${cierreStr}`;
 }
 
 // --- Eventos ---
