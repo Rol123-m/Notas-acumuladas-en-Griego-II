@@ -2,122 +2,797 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Escalafón Griego II (Semanas 15-30)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>Escalafón Griego II · Semanas 15-30</title>
 <style>
+  /* ============================================================
+     RESET Y VARIABLES
+     ============================================================ */
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
   :root {
-    --primary: #2c3e50; --secondary: #3498db; --accent: #e74c3c;
-    --light: #ecf0f1; --dark: #1a252f; --success: #27ae60; --warning: #f39c12;
+    --bg: #f5f7fb;
+    --bg-card: #ffffff;
+    --bg-elevated: #ffffff;
+    --primary: #1e293b;
+    --primary-light: #334155;
+    --accent: #6366f1;
+    --accent-soft: #eef2ff;
+    --accent-hover: #4f46e5;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --text-soft: #94a3b8;
+    --border: #e2e8f0;
+    --border-soft: #f1f5f9;
+    --success: #10b981;
+    --success-soft: #d1fae5;
+    --warning: #f59e0b;
+    --warning-soft: #fef3c7;
+    --danger: #ef4444;
+    --danger-soft: #fee2e2;
+    --gold: #eab308;
+    --silver: #94a3b8;
+    --bronze: #d97706;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.10);
+    --radius-sm: 8px;
+    --radius: 14px;
+    --radius-lg: 20px;
+    --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f4f6f9; color: #333; padding: 20px; }
-  .container { max-width: 1500px; margin: 0 auto; }
+
+  /* Modo oscuro automático */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b1120;
+      --bg-card: #111827;
+      --bg-elevated: #1e293b;
+      --primary: #f1f5f9;
+      --primary-light: #cbd5e1;
+      --accent: #818cf8;
+      --accent-soft: #1e1b4b;
+      --accent-hover: #a5b4fc;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-soft: #64748b;
+      --border: #1e293b;
+      --border-soft: #1a2332;
+      --success-soft: #064e3b;
+      --warning-soft: #78350f;
+      --danger-soft: #7f1d1d;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 16px;
+    padding-bottom: env(safe-area-inset-bottom);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .container {
+    max-width: 1500px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* ============================================================
+     HEADER
+     ============================================================ */
   header {
-    background: var(--primary); color: white; padding: 20px 30px;
-    border-radius: 12px; margin-bottom: 25px; display: flex;
-    justify-content: space-between; align-items: center; flex-wrap: wrap;
-    gap: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: white;
+    padding: 24px 28px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
   }
-  header h1 { font-size: 1.8rem; font-weight: 600; }
-  header h1 span { color: var(--secondary); }
-  header .subtitle { font-size: 0.85rem; color: #bdc3c7; margin-top: 4px; }
-  .controls { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
-  .controls label { font-weight: 500; font-size: 0.95rem; }
-  .controls select, .controls button {
-    padding: 8px 15px; border-radius: 8px; border: none; font-size: 0.95rem;
-    cursor: pointer; background: white; color: var(--primary); font-weight: 500;
+
+  @media (prefers-color-scheme: dark) {
+    header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid var(--border);
+    }
   }
-  .controls button { background: var(--secondary); color: white; }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .header-title h1 {
+    font-size: clamp(1.3rem, 4vw, 1.9rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-title h1 .emoji {
+    font-size: 1.1em;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  }
+
+  .header-title h1 .accent {
+    background: linear-gradient(135deg, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header-title .subtitle {
+    font-size: clamp(0.75rem, 2.5vw, 0.85rem);
+    color: #cbd5e1;
+    margin-top: 6px;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  .header-title .subtitle strong {
+    color: #a5b4fc;
+    font-weight: 600;
+  }
+
+  /* ============================================================
+     CONTROLES
+     ============================================================ */
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .control-group label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+  }
+
+  .control-group select {
+    padding: 10px 36px 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    backdrop-filter: blur(8px);
+    transition: var(--transition);
+    min-width: 130px;
+  }
+
+  .control-group select:hover,
+  .control-group select:focus {
+    background-color: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.3);
+    outline: none;
+  }
+
+  .control-group select option {
+    background: #1e293b;
+    color: white;
+  }
+
+  .btn-refresh {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+    white-space: nowrap;
+  }
+
+  .btn-refresh:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.45);
+  }
+
+  .btn-refresh:active {
+    transform: translateY(0);
+  }
+
+  .btn-refresh .icon {
+    transition: transform 0.5s ease;
+  }
+
+  .btn-refresh.loading .icon {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* ============================================================
+     ERROR BOX
+     ============================================================ */
+  .error {
+    background: var(--danger-soft);
+    color: var(--danger);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    border-left: 4px solid var(--danger);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    animation: slideIn 0.3s ease;
+  }
+
+  .error code {
+    background: rgba(0,0,0,0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+
+  .error ul, .error ol {
+    margin-left: 20px;
+    margin-top: 8px;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============================================================
+     STATS CARDS
+     ============================================================ */
   .stats-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px; margin-bottom: 25px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
   }
+
   .stat-card {
-    background: white; padding: 20px; border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 5px solid var(--secondary);
+    background: var(--bg-card);
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
   }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--accent), #8b5cf6);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+
   .stat-card h3 {
-    font-size: 0.85rem; text-transform: uppercase; color: #7f8c8d;
-    letter-spacing: 0.5px; margin-bottom: 5px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    font-weight: 700;
   }
-  .stat-card .value { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
-  .stat-card .sub { font-size: 0.85rem; color: #95a5a6; margin-top: 5px; }
+
+  .stat-card .value {
+    font-size: clamp(1.5rem, 4vw, 1.9rem);
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-card .sub {
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  /* ============================================================
+     TABLA / RANKING
+     ============================================================ */
   .table-container {
-    background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-    overflow-x: auto; margin-bottom: 30px;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 24px;
   }
-  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 1000px; }
-  thead { background: var(--primary); color: white; position: sticky; top: 0; z-index: 10; }
-  th { padding: 12px 10px; text-align: left; font-weight: 600; white-space: nowrap;
-       font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.3px; }
-  td { padding: 10px; border-bottom: 1px solid #e9ecef; vertical-align: middle; }
-  tbody tr:hover { background: #f8f9fa; }
-  .rank { font-weight: 700; color: var(--primary); font-size: 1rem; width: 45px; text-align: center; }
-  .rank.gold { color: #f1c40f; } .rank.silver { color: #95a5a6; } .rank.bronze { color: #cd7f32; }
-  .student-name { font-weight: 600; color: var(--dark); font-size: 0.88rem; }
-  .student-id { font-size: 0.75rem; color: #95a5a6; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  thead {
+    background: var(--primary);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    thead {
+      background: #1e293b;
+    }
+  }
+
+  th {
+    padding: 14px 12px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    color: #e2e8f0;
+  }
+
+  td {
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    transition: background 0.15s ease;
+  }
+
+  tbody tr:hover {
+    background: var(--accent-soft);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .rank {
+    font-weight: 800;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    width: 50px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rank.gold { color: var(--gold); font-size: 1.1rem; }
+  .rank.silver { color: var(--silver); font-size: 1.05rem; }
+  .rank.bronze { color: var(--bronze); font-size: 1.05rem; }
+
+  .student-cell {
+    min-width: 180px;
+  }
+
+  .student-name {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+
+  .student-id {
+    font-size: 0.72rem;
+    color: var(--text-soft);
+    margin-top: 3px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
   .student-group {
-    display: inline-block; padding: 2px 10px; border-radius: 20px;
-    font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
   }
-  .group-Alfa { background: #d4e6f1; color: #1a5276; }
-  .group-Beta { background: #fdebd0; color: #7e5109; }
-  .group-Gamma { background: #d5f5e3; color: #1e8449; }
-  .score { font-weight: 600; font-family: 'Courier New', monospace; font-size: 0.85rem; }
+
+  .group-Alfa { background: #dbeafe; color: #1e40af; }
+  .group-Beta { background: #fef3c7; color: #92400e; }
+  .group-Gamma { background: #d1fae5; color: #065f46; }
+
+  @media (prefers-color-scheme: dark) {
+    .group-Alfa { background: #1e3a8a; color: #bfdbfe; }
+    .group-Beta { background: #78350f; color: #fde68a; }
+    .group-Gamma { background: #064e3b; color: #a7f3d0; }
+  }
+
+  .score {
+    font-weight: 700;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+  }
+
   .score.high { color: var(--success); }
   .score.medium { color: var(--warning); }
-  .score.low { color: var(--accent); }
-  .score.zero { color: #bdc3c7; text-decoration: line-through; }
+  .score.low { color: var(--danger); }
+  .score.zero {
+    color: var(--text-soft);
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
   .average {
-    font-weight: 700; font-size: 1rem; color: var(--primary);
-    background: #eaf2f8; padding: 4px 10px; border-radius: 6px; display: inline-block;
+    font-weight: 800;
+    font-size: 1rem;
+    padding: 6px 14px;
+    border-radius: 10px;
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
   }
-  .no-data { color: #bdc3c7; font-style: italic; font-size: 0.8rem; }
-  .footer { text-align: center; padding: 20px; color: #95a5a6; font-size: 0.85rem; }
-  .loading { text-align: center; padding: 40px; color: var(--secondary); font-size: 1.2rem; }
-  .error {
-    background: #fadbd8; color: #922b21; padding: 15px; border-radius: 8px;
-    margin-bottom: 20px; border-left: 5px solid var(--accent);
+
+  .average.high { background: var(--success-soft); color: var(--success); }
+  .average.medium { background: var(--warning-soft); color: var(--warning); }
+  .average.low { background: var(--danger-soft); color: var(--danger); }
+
+  .no-data {
+    color: var(--text-soft);
+    font-style: italic;
+    font-size: 0.82rem;
   }
+
   .week-tag {
-    display: inline-block; background: #eaf2f8; color: var(--primary);
-    padding: 1px 5px; border-radius: 3px; font-size: 0.6rem; font-weight: 700;
-    margin-right: 2px;
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    margin-right: 3px;
+    letter-spacing: 0.02em;
   }
+
+  @media (prefers-color-scheme: dark) {
+    .week-tag {
+      background: rgba(129, 140, 248, 0.15);
+      color: #a5b4fc;
+    }
+  }
+
   .progress-bar {
-    height: 6px; background: #ecf0f1; border-radius: 3px;
-    overflow: hidden; margin-top: 6px;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 6px;
+    width: 100%;
+    max-width: 120px;
   }
+
   .progress-fill {
-    height: 100%; background: var(--secondary); border-radius: 3px;
-    transition: width 0.3s ease;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #8b5cf6);
+    border-radius: 3px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .progress-fill.low { background: var(--accent); }
-  @media (max-width: 768px) {
-    header { flex-direction: column; align-items: flex-start; }
-    .controls { width: 100%; }
-    .controls select, .controls button { flex: 1; }
+
+  .progress-fill.low {
+    background: linear-gradient(90deg, var(--danger), #f87171);
+  }
+
+  .progress-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--accent);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
+  .footer {
+    text-align: center;
+    padding: 24px 16px;
+    color: var(--text-soft);
+    font-size: 0.82rem;
+    line-height: 1.7;
+  }
+
+  .footer p {
+    margin-bottom: 4px;
+  }
+
+  .footer strong {
+    color: var(--text-muted);
+  }
+
+  .footer .live-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: var(--success);
+    border-radius: 50%;
+    margin-right: 5px;
+    animation: pulse 2s infinite;
+    vertical-align: middle;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  }
+
+  /* ============================================================
+     RESPONSIVE — MÓVIL
+     ============================================================ */
+  @media (max-width: 900px) {
+    body { padding: 12px; }
+
+    header { padding: 20px; border-radius: var(--radius); }
+    .header-content { flex-direction: column; align-items: stretch; }
+    .controls { flex-direction: row; flex-wrap: wrap; }
+    .control-group { flex: 1; min-width: 130px; }
+    .control-group select { width: 100%; min-width: unset; }
+    .btn-refresh { flex: 1 1 100%; justify-content: center; }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .stat-card { padding: 14px 16px; }
+    .stat-card .value { font-size: 1.4rem; }
+
+    /* Tabla responsive: se convierte en tarjetas */
+    .table-container {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
+      overflow: visible;
+    }
+
+    table { min-width: unset; font-size: 0.88rem; }
+
+    thead { display: none; }
+
+    tbody, tr, td { display: block; width: 100%; }
+
+    tbody tr {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+      padding: 14px;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    tbody tr:hover {
+      background: var(--bg-card);
+      box-shadow: var(--shadow);
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    td {
+      padding: 6px 0;
+      border: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    td::before {
+      content: attr(data-label);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-soft);
+      flex-shrink: 0;
+    }
+
+    /* Rank especial: en esquina superior izquierda */
+    td.rank-cell {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      padding: 0;
+      width: auto;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 800;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    td.rank-cell::before { display: none; }
+    td.rank-cell.gold { background: linear-gradient(135deg, #facc15, #eab308); color: #422006; }
+    td.rank-cell.silver { background: linear-gradient(135deg, #e2e8f0, #94a3b8); color: #1e293b; }
+    td.rank-cell.bronze { background: linear-gradient(135deg, #fbbf24, #b45309); color: #fff; }
+
+    /* Estudiante ocupa ancho completo */
+    td.student-cell {
+      display: block;
+      padding: 0 0 10px 0;
+      padding-left: 44px;
+      border-bottom: 1px solid var(--border-soft);
+      margin-bottom: 10px;
+    }
+    td.student-cell::before { display: none; }
+
+    .student-name { font-size: 0.98rem; }
+
+    /* Notas por semana: se envuelven */
+    td.exams-cell {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-soft);
+    }
+    td.exams-cell::before {
+      width: 100%;
+      margin-bottom: 6px;
+    }
+
+    .score {
+      background: var(--border-soft);
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .score.high { background: var(--success-soft); }
+    .score.medium { background: var(--warning-soft); }
+    .score.low { background: var(--danger-soft); }
+    .score.zero { background: var(--border-soft); }
+
+    .progress-bar { max-width: unset; width: 100%; }
+  }
+
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .control-group { min-width: 100%; flex: 1 1 100%; }
+    .header-title h1 { font-size: 1.25rem; }
+    tbody tr { padding: 12px; }
+    td.student-cell { padding-left: 42px; }
+  }
+
+  /* Accesibilidad: foco visible */
+  select:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Reducir movimiento si el usuario lo prefiere */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <div>
-      <h1>📚 Escalafón <span>Griego II</span></h1>
-      <div class="subtitle">Semanas 15 a 30 · Promedio sobre el total de exámenes (no realizados = 0)</div>
-    </div>
-    <div class="controls">
-      <label for="groupFilter">Grupo:</label>
-      <select id="groupFilter">
-        <option value="todos">Todos</option>
-        <option value="Alfa">Alfa</option>
-        <option value="Beta">Beta</option>
-        <option value="Gamma">Gamma</option>
-      </select>
-      <label for="weekFilter">Semana:</label>
-      <select id="weekFilter"><option value="todas">Todas</option></select>
-      <button id="refreshBtn">🔄 Actualizar</button>
+    <div class="header-content">
+      <div class="header-title">
+        <h1>
+          <span class="emoji">📚</span>
+          Escalafón <span class="accent">Griego II</span>
+        </h1>
+        <p class="subtitle">
+          Semanas <strong>15 a 30</strong> · Promedio sobre el total de exámenes (no realizados = 0)
+        </p>
+      </div>
+      <div class="controls">
+        <div class="control-group">
+          <label for="groupFilter">Grupo</label>
+          <select id="groupFilter">
+            <option value="todos">Todos</option>
+            <option value="Alfa">Alfa</option>
+            <option value="Beta">Beta</option>
+            <option value="Gamma">Gamma</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="weekFilter">Semana</label>
+          <select id="weekFilter"><option value="todas">Todas</option></select>
+        </div>
+        <button id="refreshBtn" class="btn-refresh">
+          <span class="icon">🔄</span>
+          <span>Actualizar</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -128,8 +803,12 @@
     <table id="rankingTable">
       <thead>
         <tr>
-          <th>#</th><th>Estudiante</th><th>Grupo</th>
-          <th>Promedio</th><th>Progreso</th><th>Notas por semana</th>
+          <th>#</th>
+          <th>Estudiante</th>
+          <th>Grupo</th>
+          <th>Promedio</th>
+          <th>Progreso</th>
+          <th>Notas por semana</th>
         </tr>
       </thead>
       <tbody id="rankingBody">
@@ -139,16 +818,22 @@
   </div>
 
   <div class="footer">
-    <p>Datos actualizados: <span id="lastUpdate">—</span> |
-       Estudiantes: <span id="totalStudents">—</span> |
-       Exámenes detectados: <span id="totalExams">—</span></p>
+    <p>
+      <span class="live-dot"></span>
+      Datos actualizados: <strong id="lastUpdate">—</strong> ·
+      Estudiantes: <strong id="totalStudents">—</strong> ·
+      Exámenes detectados: <strong id="totalExams">—</strong>
+    </p>
     <p>🔑 Las notas se asocian por <strong>ID de estudiante</strong>. Los exámenes no realizados cuentan como <strong>0</strong> en el promedio.</p>
-    <p style="margin-top:8px;font-size:0.75rem;">🔄 Esta página se actualiza automáticamente cada 60 segundos.</p>
+    <p style="font-size:0.75rem;margin-top:8px;">🔄 Esta página se actualiza automáticamente cada 60 segundos.</p>
   </div>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycby6TaTpvCVvYrQi_h-063JcHOf-tmBAQAM91UaQupWmyLUitv2f8BcWhMfESoTZV3tm/exec";
+// ============================================================
+// ⚠️ PEGA AQUÍ LA URL DE TU APLICACIÓN WEB DE APPS SCRIPT
+// ============================================================
+const API_URL = "https://script.google.com/macros/s/AKfycbxzY248XKb79JjkcELF3eeJQOW1DIlDHPuuCmoZTT8wFy8m_8aEwfGjlaQrRR5Y9IbA/exec";
 
 let datosGlobales = null;
 let semanasDisponibles = [];
@@ -156,31 +841,83 @@ let semanasDisponibles = [];
 // --- Cargar datos ---
 async function cargarDatos() {
   const errorBox = document.getElementById("errorBox");
+  const refreshBtn = document.getElementById("refreshBtn");
   errorBox.innerHTML = "";
+  refreshBtn.classList.add("loading");
+
+  // Validación previa
+  if (!API_URL || API_URL.includes("TU_URL")) {
+    errorBox.innerHTML = `<div class="error">
+      ❌ No has configurado la URL del Apps Script.<br>
+      Edita el HTML y reemplaza <code>TU_URL_AQUI</code> por tu URL real.
+    </div>`;
+    refreshBtn.classList.remove("loading");
+    return;
+  }
+
+  // Aviso si estamos en file://
+  if (window.location.protocol === "file:") {
+    errorBox.innerHTML = `<div class="error">
+      ⚠️ Estás abriendo el HTML con doble clic (file://).<br>
+      Los navegadores bloquean las peticiones a Apps Script desde file://.<br>
+      <strong>Soluciones:</strong>
+      <ul>
+        <li>Usa <code>python -m http.server 8000</code> y abre <code>http://localhost:8000/index.html</code></li>
+        <li>Usa la extensión Live Server de VS Code</li>
+        <li>Súbelo a Google Sites, GitHub Pages o Netlify</li>
+      </ul>
+    </div>`;
+    refreshBtn.classList.remove("loading");
+    return;
+  }
 
   try {
-    const resp = await fetch(API_URL + "?t=" + Date.now());
-    if (!resp.ok) throw new Error("HTTP " + resp.status);
-    const data = await resp.json();
-    datosGlobales = data;
+    console.log("📡 Consultando:", API_URL);
+    const resp = await fetch(API_URL + "?t=" + Date.now(), {
+      method: "GET",
+      redirect: "follow"
+    });
+    console.log("📥 Respuesta:", resp.status, resp.statusText);
 
+    if (!resp.ok) throw new Error("HTTP " + resp.status + " " + resp.statusText);
+
+    const texto = await resp.text();
+    console.log("📄 Texto recibido (primeros 200 chars):", texto.substring(0, 200));
+
+    let data;
+    try {
+      data = JSON.parse(texto);
+    } catch (e) {
+      throw new Error("La respuesta no es JSON válido. Recibido: " + texto.substring(0, 200));
+    }
+
+    datosGlobales = data;
     const setSemanas = new Set(data.examenes.map(e => e.semana));
     semanasDisponibles = Array.from(setSemanas).sort((a, b) => a - b);
     cargarSemanas();
-
     renderizar();
+
     document.getElementById("lastUpdate").textContent =
       new Date(data.actualizado).toLocaleString("es-ES");
-    document.getElementById("totalStudents").textContent =
-      data.estudiantes.length;
-    document.getElementById("totalExams").textContent =
-      data.examenes.length;
+    document.getElementById("totalStudents").textContent = data.estudiantes.length;
+    document.getElementById("totalExams").textContent = data.examenes.length;
+
+    console.log("✅ Datos cargados correctamente");
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error:", err);
     errorBox.innerHTML = `<div class="error">
-      ❌ Error al cargar datos: ${err.message}<br>
-      Verifica que la URL del Apps Script sea correcta y esté publicada como "Cualquier persona".
+      ❌ Error al cargar datos: <strong>${err.message}</strong><br><br>
+      <strong>Checklist:</strong>
+      <ol>
+        <li>Abre la URL del Apps Script directamente en el navegador. ¿Devuelve JSON?</li>
+        <li>La URL debe terminar en <code>/exec</code>, no en <code>/dev</code>.</li>
+        <li>En Apps Script: Implementar → Gestionar implementaciones → "Quién tiene acceso" = <strong>Cualquier persona</strong>.</li>
+        <li>Si modificaste el código, crea una <strong>Nueva versión</strong> de la implementación.</li>
+        <li>No abras el HTML con doble clic (<code>file://</code>). Usa un servidor local o súbelo a la web.</li>
+      </ol>
     </div>`;
+  } finally {
+    refreshBtn.classList.remove("loading");
   }
 }
 
@@ -204,7 +941,6 @@ function cargarSemanas() {
 function procesarDatos(semanaFiltro, grupoFiltro) {
   if (!datosGlobales) return { estudiantes: [], totalExamenes: 0 };
 
-  // 1. Exámenes que aplican al filtro de semana
   let examenesAplicables = datosGlobales.examenes;
   if (semanaFiltro !== "todas") {
     examenesAplicables = examenesAplicables.filter(
@@ -212,13 +948,10 @@ function procesarDatos(semanaFiltro, grupoFiltro) {
     );
   }
 
-  // 2. Exámenes que aplican al grupo del estudiante
-  //    (un estudiante de Alfa solo debe rendir los exámenes de Alfa)
   function examenesParaGrupo(grupo) {
     return examenesAplicables.filter(e => e.grupo === grupo || e.grupo === "—");
   }
 
-  // 3. Calcular promedio por estudiante
   const estudiantes = datosGlobales.estudiantes.map(est => {
     const examenesEst = examenesParaGrupo(est.grupo);
     const totalExamenes = examenesEst.length;
@@ -234,12 +967,10 @@ function procesarDatos(semanaFiltro, grupoFiltro) {
         suma += nota;
         countRealizados++;
       } else {
-        // No realizado: cuenta como 0
         notas[ex.id] = 0;
       }
     });
 
-    // Promedio = suma / total de exámenes (no realizados incluidos)
     const promedioNum = totalExamenes > 0 ? suma / totalExamenes : 0;
 
     return {
@@ -253,13 +984,11 @@ function procesarDatos(semanaFiltro, grupoFiltro) {
     };
   });
 
-  // 4. Filtrar por grupo si aplica
   let filtrados = estudiantes;
   if (grupoFiltro !== "todos") {
     filtrados = filtrados.filter(e => e.grupo === grupoFiltro);
   }
 
-  // 5. Ordenar
   filtrados.sort((a, b) => b.promedioNum - a.promedioNum);
 
   return {
@@ -284,11 +1013,10 @@ function renderizar() {
   tbody.innerHTML = "";
 
   if (datos.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="no-data">Sin datos para este filtro.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="no-data" style="text-align:center;padding:40px;">Sin datos para este filtro.</td></tr>';
     return;
   }
 
-  // Exámenes a mostrar en columnas
   const examenesMostrar = semanaFiltro === "todas"
     ? datosGlobales.examenes
     : datosGlobales.examenes.filter(e => String(e.semana) === String(semanaFiltro));
@@ -298,7 +1026,8 @@ function renderizar() {
 
     // Rank
     const rankTd = document.createElement("td");
-    rankTd.className = "rank";
+    rankTd.className = "rank rank-cell";
+    rankTd.setAttribute("data-label", "#");
     if (i === 0) rankTd.classList.add("gold");
     else if (i === 1) rankTd.classList.add("silver");
     else if (i === 2) rankTd.classList.add("bronze");
@@ -307,17 +1036,21 @@ function renderizar() {
 
     // Estudiante
     const nameTd = document.createElement("td");
+    nameTd.className = "student-cell";
+    nameTd.setAttribute("data-label", "Estudiante");
     nameTd.innerHTML = `<div class="student-name">${est.nombre}</div>
                         <div class="student-id">ID: ${est.id}</div>`;
     tr.appendChild(nameTd);
 
     // Grupo
     const groupTd = document.createElement("td");
+    groupTd.setAttribute("data-label", "Grupo");
     groupTd.innerHTML = `<span class="student-group group-${est.grupo}">${est.grupo}</span>`;
     tr.appendChild(groupTd);
 
     // Promedio
     const avgTd = document.createElement("td");
+    avgTd.setAttribute("data-label", "Promedio");
     let avgClass = "";
     if (est.promedio !== "—") {
       const num = parseFloat(est.promedio);
@@ -328,22 +1061,25 @@ function renderizar() {
     avgTd.innerHTML = `<span class="average ${avgClass}">${est.promedio}</span>`;
     tr.appendChild(avgTd);
 
-    // Progreso (realizados / total)
+    // Progreso
     const progTd = document.createElement("td");
+    progTd.setAttribute("data-label", "Progreso");
     const pct = est.totalExamenes > 0
       ? Math.round((est.countRealizados / est.totalExamenes) * 100)
       : 0;
     const fillClass = pct < 50 ? "low" : "";
     progTd.innerHTML = `
-      <div style="font-size:0.75rem;color:#7f8c8d;">
-        ${est.countRealizados}/${est.totalExamenes} (${pct}%)
+      <div>
+        <div class="progress-label">${est.countRealizados}/${est.totalExamenes} (${pct}%)</div>
+        <div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${pct}%"></div></div>
       </div>
-      <div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${pct}%"></div></div>
     `;
     tr.appendChild(progTd);
 
     // Notas por semana
     const examsTd = document.createElement("td");
+    examsTd.className = "exams-cell";
+    examsTd.setAttribute("data-label", "Notas");
     let html = "";
     const examenesOrdenados = [...examenesMostrar]
       .sort((a, b) => a.semana - b.semana || a.grupo.localeCompare(b.grupo));
@@ -357,7 +1093,7 @@ function renderizar() {
         else if (nota >= 70) cls = "medium";
         else cls = "low";
 
-        html += `<span class="score ${cls}" style="margin-right:6px;"
+        html += `<span class="score ${cls}"
                  title="${ex.nombre} (${ex.grupo})">
                  <span class="week-tag">S${ex.semana}</span>${nota}
                  </span>`;
